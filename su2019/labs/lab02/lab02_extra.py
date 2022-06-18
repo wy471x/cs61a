@@ -102,4 +102,19 @@ def cycle(f1, f2, f3):
     19
     """
     "*** YOUR CODE HERE ***"
+    def execution(times, target):
+        f = lambda x: x
+        i = 1
+        while i <= times:
+            if i % 3 == 1:
+                f = f1
+            elif i % 3 == 2:
+                f = f2
+            else:
+                f = f3
+            target = f(target)
+            i += 1
+        return target
+    return lambda_curry2(execution)
+      
 
