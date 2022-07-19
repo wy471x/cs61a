@@ -14,6 +14,12 @@ def squares(s):
     []
     """
     "*** YOUR CODE HERE ***"
+    result = []
+    for e in s:
+        square = round(sqrt(e))
+        if square == sqrt(e):
+            result += [square]
+    return result
 
 def key_of_min_value(d):
     """Returns the key in a dict d that corresponds to the minimum value of d.
@@ -24,3 +30,7 @@ def key_of_min_value(d):
     'c'
     """
     "*** YOUR CODE HERE ***"
+    min_value = min(d.values())
+    for item in d.items():
+        if item[1] == min_value:
+            return item[0]
