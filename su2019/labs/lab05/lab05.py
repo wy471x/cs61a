@@ -13,8 +13,10 @@ def merge(lst1, lst2):
     >>> merge([5, 7], [2, 4, 6])
     [2, 4, 5, 6, 7]
     """
-    if not lst1 or not lst2:
-        return []
+    if not lst1:
+        return lst2
+    if not lst2:
+        return lst1
     elif lst1[0] < lst2[0]:
         return [lst1[0]] + merge(lst1[1:], lst2)
     else:
@@ -46,6 +48,15 @@ def add_chars(w1, w2):
     True
     """
     "*** YOUR CODE HERE ***"
+    if len(w1) == 0:
+        return w2
+    str = ''
+    if w1.find(w2[0]) == -1:
+        str += w2[0]
+        str += add_chars(w1, w2[1:])
+    else:
+        str += add_chars(w1[1:], w2[1:])
+    return str
 
 def acorn_finder(t):
     """Returns True if t contains a node with the value 'acorn' and
@@ -65,6 +76,16 @@ def acorn_finder(t):
     True
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t):
+        if label(t) == 'acorn':
+            return True
+        return False
+    if label(t) == 'acorn':
+        return True
+    for b in branches(t):
+        if acorn_finder(b):
+            return True
+    return False
 
 # Tree ADT
 def tree(label, branches=[]):
