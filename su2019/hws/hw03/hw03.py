@@ -93,6 +93,7 @@ def taxicab(a, b):
     9
     """
     "*** YOUR CODE HERE ***"
+    return abs(street(a) - street(b)) + abs(avenue(a) - avenue(b))
 
 def flatten(lst):
     """Returns a flattened version of lst.
@@ -111,6 +112,15 @@ def flatten(lst):
     [[1, [1, 1]], 1, [1, 1]]
     """
     "*** YOUR CODE HERE ***"
+    if type(lst) != list:
+        return [lst]
+    new_lst = []
+    for e in lst:
+        if type(e) != list:
+            new_lst += [e]
+        else:
+            new_lst += flatten(e)
+    return new_lst
 
 def replace_leaf(t, old, new):
     """Returns a new tree where every leaf value equal to old has
@@ -142,6 +152,14 @@ def replace_leaf(t, old, new):
     True
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t):
+        if label(t) == old:
+            return tree(new)
+        return tree(label(t))
+    new_tree = [label(t)]
+    for b in branches(t):
+        new_tree += [replace_leaf(b, old, new)]
+    return new_tree
 
 # Mobiles
 
@@ -188,11 +206,13 @@ def weight(size):
     """Construct a weight of some size."""
     assert size > 0
     "*** YOUR CODE HERE ***"
+    return ['weight', size]
 
 def size(w):
     """Select the size of a weight."""
     assert is_weight(w), 'must call size on a weight'
     "*** YOUR CODE HERE ***"
+    return w[1]
 
 def is_weight(w):
     """Whether w is a weight."""
@@ -241,6 +261,35 @@ def balanced(m):
     False
     """
     "*** YOUR CODE HERE ***"
+    return is_balanced(m)
+
+def is_balanced(m):
+    if is_weight(end(left(m))) and is_weight(end(right(m))):
+        return length(left(m)) * size(end(left(m))) == length(right(m)) * size(end(right(m)))
+    if is_mobile(end(left(m))) and is_weight(end(right(m))):
+        left_weight = compute(end(left(m)))
+        return is_balanced(end(left(m))) and length(left(m)) * left_weight == length(right(m)) * size(end(right(m)))
+    if is_mobile(end(right(m))) and is_weight(end(left(m))):
+        right_weight = compute(end(right(m)))
+        return is_balanced(end(right(m))) and length(right(m)) * right_weight == length(left(m)) * size(end(left(m)))
+    left_weight = compute(end(left(m)))
+    right_weight = compute(end(right(m)))
+    return is_balanced(end(left(m))) and is_balanced(end(right(m))) and length(left(m)) * left_weight == length(right(m)) * right_weight
+
+def compute(m):
+    if is_weight(end(left(m))) and is_weight(end(right(m))):
+        return size(end(left(m))) + size(end(right(m)))
+    left_weight, right_weight = 0, 0
+    if is_mobile(end(left(m))):
+        left_weight = compute(end(left(m)))
+    else:
+        left_weight = size(end(left(m)))
+    if is_mobile(end(right(m))):
+        right_weight = compute(end(right(m)))
+    else:
+        right_weight = size(end(right(m)))
+    return left_weight + right_weight
+
 
 def totals_tree(m):
     """Return a tree representing the mobile with its total weight at the root.
@@ -268,6 +317,21 @@ def totals_tree(m):
           2
     """
     "*** YOUR CODE HERE ***"
+    if is_weight(end(left(m))) and is_weight(end(right(m))):
+        return tree(size(end(left(m))) + size(end(right(m))), [tree(size(end(left(m)))), tree(size(end(right(m))))])
+    new_trees = []
+    left_tree, right_tree = [], []
+    if is_mobile(end(left(m))):
+        left_tree = totals_tree(end(left(m)))
+    else:
+        left_tree = tree(size(end(left(m))))
+    if is_mobile(end(right(m))):
+        right_tree = totals_tree(end(right(m)))
+    else:
+        right_tree = tree(size(end(right(m))))
+    new_trees += tree(label(left_tree) + label(right_tree), [left_tree, right_tree])
+    return new_trees
+
 
 ###################
 # Extra Questions #
@@ -282,10 +346,12 @@ def successor(n):
 def one(f):
     """Church numeral 1: same as successor(zero)"""
     "*** YOUR CODE HERE ***"
+    return lambda x: f(x)
 
 def two(f):
     """Church numeral 2: same as successor(successor(zero))"""
     "*** YOUR CODE HERE ***"
+    return lambda x: f(f(x))
 
 three = successor(two)
 
@@ -302,6 +368,9 @@ def church_to_int(n):
     3
     """
     "*** YOUR CODE HERE ***"
+    f = lambda x: x + 1
+    return n(f)(0)
+
 
 def add_church(m, n):
     """Return the Church numeral for m + n, for Church numerals m and n.
@@ -310,6 +379,7 @@ def add_church(m, n):
     5
     """
     "*** YOUR CODE HERE ***"
+    return lambda f: lambda x: m(f)(n(f)(x))
 
 def mul_church(m, n):
     """Return the Church numeral for m * n, for Church numerals m and n.
@@ -321,6 +391,7 @@ def mul_church(m, n):
     12
     """
     "*** YOUR CODE HERE ***"
+    return lambda f: m(n(f))
 
 def pow_church(m, n):
     """Return the Church numeral m ** n, for Church numerals m and n.
@@ -331,3 +402,4 @@ def pow_church(m, n):
     9
     """
     "*** YOUR CODE HERE ***"
+    return n(m)
