@@ -140,15 +140,21 @@ def add_trees(t1, t2):
       5
     """
     "*** YOUR CODE HERE ***"
-    if is_leaf(t1):
-        return tree(label(t1))
-    if is_leaf(t2):
-        return tree(label(t2))
     if is_leaf(t1) and is_leaf(t2):
         return tree(label(t1) + label(t2))
     lst = [label(t1) + label(t2)]
-    pairs = zip(branches(t1), branches(t2))
-    # print(tuple(pairs))
-    for pair in pairs:
-        lst += [add_trees(pair[0], pair[1])]
+    t1_len, t2_len = len(branches(t1)), len(branches(t2))
+    if t1_len != 0 and t2_len != 0:
+        pairs = zip(branches(t1), branches(t2))
+        for pair in pairs:
+            lst += [add_trees(pair[0], pair[1])]
+        min_len = min(t1_len, t2_len)
+        if t1_len > t2_len:
+            lst += branches(t1)[min_len:]
+        else:
+            lst += branches(t2)[min_len:]
+    elif t1_len != 0:
+        lst += branches(t1)
+    elif t2_len != 0:
+        lst += branches(t2)
     return lst
