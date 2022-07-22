@@ -3,6 +3,8 @@
 HW_SOURCE_FILE = 'hw02.py'
 
 from operator import add, mul, sub
+# additional
+from math import sqrt, pow, floor
 
 square = lambda x: x * x
 
@@ -37,6 +39,10 @@ def product(n, term):
     True
     """
     "*** YOUR CODE HERE ***"
+    result = 1
+    for i in range(1, n + 1):
+        result *= term(i)
+    return result
 
 def factorial(n):
     """Return n factorial for n >= 0 by calling product.
@@ -50,6 +56,7 @@ def factorial(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    return product(n, identity)
 
 def accumulate(combiner, base, n, term):
     """Return the result of combining the first n terms in a sequence and base.
@@ -70,6 +77,10 @@ def accumulate(combiner, base, n, term):
     19
     """
     "*** YOUR CODE HERE ***"
+    result = base
+    for i in range(1, n + 1):
+        result = combiner(result, term(i))
+    return result
 
 def summation_using_accumulate(n, term):
     """Returns the sum of term(1) + ... + term(n). The implementation
@@ -85,6 +96,7 @@ def summation_using_accumulate(n, term):
     True
     """
     "*** YOUR CODE HERE ***"
+    return accumulate(add, 0, n, term)
 
 def product_using_accumulate(n, term):
     """An implementation of product using accumulate.
@@ -99,6 +111,7 @@ def product_using_accumulate(n, term):
     True
     """
     "*** YOUR CODE HERE ***"
+    return accumulate(mul, 1, n, term)
 
 def compose1(f, g):
     """Return a function h, such that h(x) = f(g(x))."""
@@ -122,6 +135,20 @@ def make_repeater(f, n):
     5
     """
     "*** YOUR CODE HERE ***"
+    ## loop
+    #def process(x):
+    #    for i in range(n):
+    #        x = f(x)
+    #    return x
+    #return process
+    ## recursion
+    def process(x):
+        if n == 0:
+            return x
+        else:
+            return f(make_repeater(f, n - 1)(x))
+    return process
+
 
 def num_sevens(n):
     """Returns the number of times 7 appears as a digit of n.
@@ -144,6 +171,12 @@ def num_sevens(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n < 10 and n != 7:
+        return 0
+    elif n < 10 and n == 7:
+        return 1
+    return num_sevens(n // 10) + 1 if n % 10 == 7 else num_sevens(n // 10)
+        
 
 def pingpong(n):
     """Return the nth element of the ping-pong sequence.
@@ -177,6 +210,36 @@ def pingpong(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    ## loop
+    #flag = True
+    #count, index = 1, 1
+    #i = 1
+    #while (i < n):
+    #    if num_sevens(index) or index % 7 == 0:
+    #        flag = not flag
+    #    if flag:
+    #        count += 1
+    #    else:
+    #        count -= 1
+    #    index += 1
+    #    i += 1
+    #return count
+    ## recursion
+    return helper(True, 1, 1, n)
+
+
+def helper(flag, count, index, n):
+    if index == n:
+        return count
+    if num_sevens(index) or index % 7 == 0:
+        flag = not flag
+    if flag:
+        count += 1
+    else:
+        count -= 1
+    return helper(flag, count, index + 1, n)
+
+
 
 def count_change(amount):
     """Return the number of ways to make change for amount.
@@ -194,7 +257,27 @@ def count_change(amount):
     True
     """
     "*** YOUR CODE HERE ***"
+    n = amount
+    m = pow(2, upper_limit(n))
+    return count_partitions(n, m)
 
+def count_partitions(n, m):
+    if n == 1 or m == 1:
+        return 1
+    elif n < 0:
+        return 0
+    else:
+        limit = upper_limit(m)
+        return count_partitions(n - m, m) + count_partitions(n, pow(2, limit))
+
+def upper_limit(m):
+    i = 1
+    while True:
+        upper_num = pow(2, i)
+        if upper_num >= m:
+            break
+        i += 1
+    return i - 1
 
 
 ###################
@@ -234,6 +317,14 @@ def move_stack(n, start, end):
     """
     assert 1 <= start <= 3 and 1 <= end <= 3 and start != end, "Bad start/end"
     "*** YOUR CODE HERE ***"
+    return tower_of_hanoi(n, start, end, 6 - start - end)
+
+def tower_of_hanoi(n, start, end, mid):
+    if n == 0:
+        return 
+    tower_of_hanoi(n - 1, start, mid, end)
+    print_move(start, end)
+    tower_of_hanoi(n - 1, mid, end, start)
 
 from operator import sub, mul
 
@@ -246,4 +337,4 @@ def make_anonymous_factorial():
     >>> check(HW_SOURCE_FILE, 'make_anonymous_factorial', ['Assign', 'AugAssign', 'FunctionDef', 'Recursion'])
     True
     """
-    return 'YOUR_EXPRESSION_HERE'
+    return (lambda f: lambda x: f(f, x))(lambda f, x: 1 if x == 1 else mul(x, f(f, sub(x, 1))))
