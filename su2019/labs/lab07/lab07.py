@@ -39,8 +39,15 @@ def num_trees(n):
 
     """
     "*** YOUR CODE HERE ***"
+    molecular, denominator = 0, 0
+    molecular = fact(2 * (n - 1))
+    denominator = fact(n) * fact(n - 1)
+    return molecular // denominator
 
-
+def fact(n):
+    if n == 1 or n == 0:
+        return 1
+    return n * fact(n - 1)
 
 def prune_leaves(t, vals):
     """Return a modified copy of t with all leaves that have a label
@@ -67,6 +74,18 @@ def prune_leaves(t, vals):
       6
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t) and label(t) not in vals:
+        return tree(label(t))
+    if is_leaf(t) and label(t) in vals:
+        return None
+    new_tree = tree(label(t))
+    for b in branches(t):
+        new_branch = prune_leaves(b, vals)
+        if new_branch:
+            new_tree += [new_branch]
+    return None if len(new_tree) == 0 else new_tree
+
+        
 
 def dict_to_lst(d):
     """Returns a list containing all the (key, value) pairs in d as two-element
