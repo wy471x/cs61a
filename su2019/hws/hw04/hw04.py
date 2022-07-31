@@ -18,6 +18,20 @@ def make_fib():
     12
     """
     "*** YOUR CODE HERE ***"
+    i = 0
+    first, second = 0, 1
+    def fib():
+        nonlocal first, second, i
+        if i == 0 or i == 1:
+            result = i
+            i += 1
+            return result
+        total = first + second 
+        first = second
+        second = total
+        i += 1
+        return total
+    return fib
 
 def make_withdraw(balance, password):
     """Return a password-protected withdraw function.
@@ -48,6 +62,22 @@ def make_withdraw(balance, password):
     True
     """
     "*** YOUR CODE HERE ***"
+    stored_password = password
+    error_password = []
+    count = 0
+    def withdraw(amount, password):
+        nonlocal balance, count, error_password
+        if count >= 3:
+            return "Your account is locked. Attempts: [" + ', '.join(str("'" + e + "'") for e in error_password) + "]"
+        if password != stored_password:
+            count += 1
+            error_password += [password]
+            return 'Incorrect password'
+        if amount > balance:
+            return 'Insufficient funds'
+        balance = balance - amount
+        return balance
+    return withdraw
 
 class Mint:
     """A mint creates coins by stamping on years.
@@ -86,9 +116,11 @@ class Mint:
 
     def create(self, kind):
         "*** YOUR CODE HERE ***"
+        return kind(self.year)
 
     def update(self):
         "*** YOUR CODE HERE ***"
+        self.year = Mint.current_year
 
 class Coin:
     def __init__(self, year):
@@ -96,6 +128,17 @@ class Coin:
 
     def worth(self):
         "*** YOUR CODE HERE ***"
+        gap = Mint.current_year - self.year
+        if type(self) is Nickel:
+            if gap >= 50:
+                return Nickel.cents + Mint.current_year - self.year - 50
+            else:
+                return Nickel.cents
+        else:
+            if gap >= 50:
+                return Dime.cents + Mint.current_year - self.year - 50
+            else:
+                return Dime.cents
 
 class Nickel(Coin):
     cents = 5
