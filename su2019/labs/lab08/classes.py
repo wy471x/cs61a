@@ -162,8 +162,11 @@ class TutorCard(Card):
         True
         """
         "*** YOUR CODE HERE ***"
+        for i in range(3):
+            opponent.hand.pop(i)
+            opponent.draw()
         #Uncomment the line below when you've finished implementing this method!
-        #print('{} discarded and re-drew 3 cards!'.format(opponent.name))
+        print('{} discarded and re-drew 3 cards!'.format(opponent.name))
 
     def copy(self):
         """
@@ -188,7 +191,9 @@ class TACard(Card):
         300
         """
         "*** YOUR CODE HERE ***"
-
+        value = other_card.attack
+        other_card.attack = other_card.defense
+        other_card.defense = value
 
     def copy(self):
         """
@@ -221,8 +226,13 @@ class InstructorCard(Card):
         300
         """
         "*** YOUR CODE HERE ***"
+        for card in player.deck.cards:
+            card.attack += 300
+            card.defense += 300
+        player.hand.append(other_card.copy())
+        player.deck.cards.append(other_card.copy())
         #Uncomment the line below when you've finished implementing this method!
-        #print('{}\'s card added to {}\'s hand and deck!'.format(opponent.name, player.name))
+        print('{}\'s card added to {}\'s hand and deck!'.format(opponent.name, player.name))
 
     def copy(self):
         """
