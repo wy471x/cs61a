@@ -184,6 +184,39 @@ class VendingMachine:
     'Here is your soda.'
     """
     "*** YOUR CODE HERE ***"
+    stock = 0
+    balance = 0
+
+    def __init__(self, product, price):
+        self.product = product
+        self.price = price
+        self.balance = VendingMachine.balance
+        self.stock = VendingMachine.stock
+
+    def vend(self):
+        if self.stock <= 0:
+            return 'Machine is out of stock.'
+        if self.balance < self.price:
+            return 'You must deposit ${0} more.'.format(self.price - self.balance)
+        elif self.balance > self.price:
+            change = self.balance - self.price
+            self.balance = VendingMachine.balance
+            self.stock -= 1
+            return 'Here is your {0} and ${1} change.'.format(self.product, change)
+        else:
+            self.balance = self.balance - self.price
+            self.stock -= 1
+            return 'Here is your {0}.'.format(self.product)
+
+    def restock(self, stock):
+        self.stock += stock
+        return 'Current {0} stock: {1}'.format(self.product, self.stock)
+
+    def deposit(self, coins):
+        if self.stock <= 0:
+            return 'Machine is out of stock. Here is your ${0}.'.format(coins)
+        self.balance += coins
+        return 'Current balance: ${0}'.format(self.balance)
 
 def remove_all(link , value):
     """Remove all the nodes containing value in link. Assume that the
