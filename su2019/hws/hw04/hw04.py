@@ -236,6 +236,16 @@ def remove_all(link , value):
     <0 1>
     """
     "*** YOUR CODE HERE ***"
+    pre, cur = link, link.rest
+    while cur is not Link.empty:
+        while cur.first == value:
+            cur = cur.rest
+            if cur is Link.empty:
+                break
+        pre.rest = cur
+        pre = pre.rest
+        if cur is not Link.empty:
+            cur = cur.rest
 
 def generate_paths(t, x):
     """Yields all possible paths from the root of t to a node with the label x
@@ -271,13 +281,14 @@ def generate_paths(t, x):
     >>> sorted(list(path_to_2))
     [[0, 2], [0, 2, 1, 2]]
     """
+    if t.label == x:
+        yield [t.label]
 
-    "*** YOUR CODE HERE ***"
+    for b in t.branches:
+        for path in generate_paths(b, x):
+            yield [t.label] + path
 
-    for _______________ in _________________:
-        for _______________ in _________________:
 
-            "*** YOUR CODE HERE ***"
 
 ## Link Class ##
 
