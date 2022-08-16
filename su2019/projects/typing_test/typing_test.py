@@ -141,6 +141,25 @@ KEY_DISTANCES = get_key_distances()
 ## Q7: Accuracy
 
 def score_function_accurate(word1, word2):
+    
+    def dp(word1, word2, i, j):
+        if i == -1:
+            return j + 1
+        if j == -1:
+            return i + 1
+        if memo[i][j] != 0:
+            return memo[i][j]
+
+        if word1[i] == word2[j]:
+            memo[i][j] = dp(word1, word2, i - 1, j - 1)
+        else:
+            a = dp(word1, word2, i, j - 1) + 1
+            b = dp(word1, word2, i - 1, j) + 1
+            c = dp(word1, word2, i - 1, j - 1) + KEY_DISTANCES[word1[i], word2[j]]
+            memo[i][j] = min(a, b, c)
+        return memo[i][j]
+    memo = [[0] * len(word2) for i in range(len(word1))]
+    return dp(word1, word2, len(word1) - 1, len(word2) - 1)
 
 ## Q8: Efficiency
 
