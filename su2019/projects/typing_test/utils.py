@@ -10,7 +10,7 @@ import string
 # Submitting design questions #
 ###############################
 
-passphrase = '*** PASSPHRASE HERE ***'
+passphrase = '814716d640bad70cbb9c76c72f2810e06f588a1bc1039d2510acab2d'
 
 def check_passphrase(p):
     """
