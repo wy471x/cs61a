@@ -69,8 +69,13 @@ class Place(object):
             # Special handling for QueenAnt
             # BEGIN Problem 13
             "*** YOUR CODE HERE ***"
-            if isinstance(insect, QueenAnt) and insect.is_queue is False:
-                self.ant = None
+            if isinstance(insect, QueenAnt):
+                if not insect.is_queue:
+                    self.ant = None
+                    return
+                else:
+                    self.ant = insect
+                    return
             # END Problem 13
 
             # Special handling for container ants
