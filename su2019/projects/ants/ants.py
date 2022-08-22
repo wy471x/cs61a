@@ -69,6 +69,8 @@ class Place(object):
             # Special handling for QueenAnt
             # BEGIN Problem 13
             "*** YOUR CODE HERE ***"
+            if isinstance(insect, QueenAnt) and insect.is_queue is False:
+                self.ant = None
             # END Problem 13
 
             # Special handling for container ants
@@ -488,12 +490,18 @@ class QueenAnt(ScubaThrower):  # You should change this line
     # BEGIN Problem 13
     implemented = True   # Change to True to view in the GUI
     food_cost = 7
+    is_queue = False
     # END Problem 13
 
     def __init__(self, armor=1):
         # BEGIN Problem 13
         "*** YOUR CODE HERE ***"
         Ant.__init__(self, armor)
+        if QueenAnt.is_queue is False:
+            self.is_queue = True
+            QueenAnt.is_queue = True
+        else:
+            self.is_queue = False
         # END Problem 13
 
     def action(self, colony):
@@ -504,7 +512,17 @@ class QueenAnt(ScubaThrower):  # You should change this line
         """
         # BEGIN Problem 13
         "*** YOUR CODE HERE ***"
-        
+        ThrowerAnt.action(self, colony)
+        position = self.place
+        #print(position, position.exit)
+        if self.is_queue:
+            while position.exit is not None:
+                if position.ant is not None:
+                    position.ant.damage *= 2
+                position = position.exit
+        else:
+            self.reduce_armor(self.armor)
+
         # END Problem 13
 
     def reduce_armor(self, amount):
@@ -515,7 +533,11 @@ class QueenAnt(ScubaThrower):  # You should change this line
         "*** YOUR CODE HERE ***"
         self.armor -= amount
         if self.armor <= 0:
-            bees_win()
+            if self.is_queue:
+                bees_win()
+            else:
+                Place.remove_insect(self.place, self)
+
         # END Problem 13
 
 class AntRemover(Ant):
