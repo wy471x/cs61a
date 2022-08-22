@@ -71,11 +71,14 @@ class Place(object):
             "*** YOUR CODE HERE ***"
             if isinstance(insect, QueenAnt):
                 if not insect.is_queue:
-                    self.ant = None
-                    return
+                    if self.ant is insect:
+                        self.ant = None
+                    else:
+                        self.ant.contained_ant = None
+                    insect.place = None
                 else:
                     self.ant = insect
-                    return
+                return
             # END Problem 13
 
             # Special handling for container ants
@@ -496,6 +499,7 @@ class QueenAnt(ScubaThrower):  # You should change this line
     implemented = True   # Change to True to view in the GUI
     food_cost = 7
     is_queue = False
+    added_damage_ants = []
     # END Problem 13
 
     def __init__(self, armor=1):
@@ -507,6 +511,7 @@ class QueenAnt(ScubaThrower):  # You should change this line
             QueenAnt.is_queue = True
         else:
             self.is_queue = False
+        self.added_damage_ants = QueenAnt.added_damage_ants
         # END Problem 13
 
     def action(self, colony):
@@ -517,13 +522,21 @@ class QueenAnt(ScubaThrower):  # You should change this line
         """
         # BEGIN Problem 13
         "*** YOUR CODE HERE ***"
-        ThrowerAnt.action(self, colony)
-        position = self.place
-        #print(position, position.exit)
         if self.is_queue:
-            while position.exit is not None:
-                if position.ant is not None:
-                    position.ant.damage *= 2
+            ThrowerAnt.action(self, colony)
+            position = self.place.exit
+            while position != None:
+                if position.ant != None:
+                    if not position.ant.is_container and position.ant not in self.added_damage_ants:
+                        position.ant.damage *= 2
+                        self.added_damage_ants += [position.ant]
+                    elif position.ant.is_container:
+                        if isinstance(position.ant, TankAnt) and position.ant not in self.added_damage_ants:
+                            position.ant.damage *= 2
+                            self.added_damage_ants += [position.ant]
+                        if position.ant.contained_ant != None and position.ant.contained_ant not in self.added_damage_ants: 
+                            position.ant.contained_ant.damage *= 2
+                            self.added_damage_ants += [position.ant.contained_ant]
                 position = position.exit
         else:
             self.reduce_armor(self.armor)
@@ -542,7 +555,6 @@ class QueenAnt(ScubaThrower):  # You should change this line
                 bees_win()
             else:
                 Place.remove_insect(self.place, self)
-
         # END Problem 13
 
 class AntRemover(Ant):
@@ -566,6 +578,10 @@ def make_slow(action, bee):
     """
     # BEGIN Problem EC
     "*** YOUR CODE HERE ***"
+    def action(colony):
+        if colony.time % 2 == 0:
+            bee.action(colony)
+    return action
     # END Problem EC
 
 def make_scare(action, bee):
@@ -575,6 +591,9 @@ def make_scare(action, bee):
     """
     # BEGIN Problem EC
     "*** YOUR CODE HERE ***"
+    def action(colony):
+        if not isinstance(bee.place.entrance, Hive): 
+            bee.move_to(bee.place.entrance)
     # END Problem EC
 
 def apply_effect(effect, bee, duration):
@@ -589,7 +608,11 @@ class SlowThrower(ThrowerAnt):
 
     name = 'Slow'
     # BEGIN Problem EC
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    food_cost = 4
+
+    def __init__(self, armor=1):
+        Ant.__init__(self, armor)
     # END Problem EC
 
     def throw_at(self, target):
@@ -602,7 +625,11 @@ class ScaryThrower(ThrowerAnt):
 
     name = 'Scary'
     # BEGIN Problem EC
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    food_cost = 6
+
+    def __init__(self, armor=1):
+        Ant.__init__(self, armor)
     # END Problem EC
 
     def throw_at(self, target):
