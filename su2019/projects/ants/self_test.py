@@ -65,22 +65,124 @@
 # colony.places['tunnel_0_3'].ant is container
 # print(colony.places['tunnel_0_3'].ant)
 
-import ants, importlib
-importlib.reload(ants)
-hive = ants.Hive(ants.AssaultPlan())
-dimensions = (2, 9)
-colony = ants.AntColony(None, hive, ants.ant_types(),
-         ants.dry_layout, dimensions)
-ants.bees_win = lambda: None
-# QueenAnt Placement
-queen = ants.QueenAnt()
-impostor = ants.QueenAnt()
-front_ant, back_ant = ants.ThrowerAnt(), ants.ThrowerAnt()
-tunnel = [colony.places['tunnel_0_{0}'.format(i)]
-         for i in range(9)]
-tunnel[1].add_insect(back_ant)
-tunnel[7].add_insect(front_ant)
-tunnel[4].add_insect(impostor)
-print(impostor.place)
-impostor.action(colony)
+# import ants, importlib
+# importlib.reload(ants)
+# hive = ants.Hive(ants.AssaultPlan())
+# dimensions = (2, 9)
+# colony = ants.AntColony(None, hive, ants.ant_types(),
+#          ants.dry_layout, dimensions)
+# ants.bees_win = lambda: None
+# # QueenAnt Placement
+# queen = ants.QueenAnt()
+# impostor = ants.QueenAnt()
+# front_ant, back_ant = ants.ThrowerAnt(), ants.ThrowerAnt()
+# tunnel = [colony.places['tunnel_0_{0}'.format(i)]
+#          for i in range(9)]
+# tunnel[1].add_insect(back_ant)
+# tunnel[7].add_insect(front_ant)
+# tunnel[4].add_insect(impostor)
+# print(impostor.place)
+# impostor.action(colony)
+
+# from ants import *
+# hive, layout = Hive(AssaultPlan()), dry_layout
+# dimensions = (1, 9)
+# colony = AntColony(None, hive, ant_types(), layout, dimensions)
+# # Testing Slow
+# slow = SlowThrower()
+# bee = Bee(3)
+# colony.places["tunnel_0_0"].add_insect(slow)
+# colony.places["tunnel_0_4"].add_insect(bee)
+# slow.action(colony)
+# colony.time = 1
+# bee.action(colony)
+# bee.place.name # SlowThrower should cause slowness on odd turns
+# print(bee.place.name)
+# colony.time += 1
+# bee.action(colony)
+# bee.place.name
+# print(bee.place.name)
+# for _ in range(3):
+#     colony.time += 1
+#     bee.action(colony)
+# bee.place.name
+# print(bee.place.name)
+
+# from ants import *
+# hive, layout = Hive(AssaultPlan()), dry_layout
+# dimensions = (1, 9)
+# colony = AntColony(None, hive, ant_types(), layout, dimensions)
+# # Testing Scare
+# error_msg = "ScaryThrower doesn't scare for exactly two turns."
+# scary = ScaryThrower()
+# bee = Bee(3)
+# colony.places["tunnel_0_0"].add_insect(scary)
+# colony.places["tunnel_0_4"].add_insect(bee)
+# scary.action(colony)
+# bee.action(colony)
+# bee.place.name # ScaryThrower should scare for two turns
+
+# from ants import *
+# hive, layout = Hive(AssaultPlan()), dry_layout
+# dimensions = (1, 9)
+# colony = AntColony(None, hive, ant_types(), layout, dimensions)
+# # Testing if effects stack
+# slow = SlowThrower()
+# bee = Bee(3)
+# slow_place = colony.places["tunnel_0_0"]
+# bee_place = colony.places["tunnel_0_4"]
+# slow_place.add_insect(slow)
+# bee_place.add_insect(bee)
+# for _ in range(2):    # slow bee two times
+#    slow.action(colony)
+# colony.time = 1
+# for _ in range(5):        # bee should only move on odd times
+#    bee.action(colony)
+#    colony.time += 1
+# bee.place.name
+
+# from ants import *
+# hive, layout = Hive(AssaultPlan()), dry_layout
+# dimensions = (1, 9)
+# colony = AntColony(None, hive, ant_types(), layout, dimensions)
+# # Testing if effects stack
+# slow = SlowThrower()
+# bee = Bee(3)
+# slow_place = colony.places["tunnel_0_0"]
+# bee_place = colony.places["tunnel_0_4"]
+# slow_place.add_insect(slow)
+# bee_place.add_insect(bee)
+# for _ in range(2):    # slow bee two times
+#    slow.action(colony)
+# colony.time = 1
+# for _ in range(5):        # bee should only move on odd times
+#    bee.action(colony)
+#    colony.time += 1
+# bee.place.name
+# colony.time += 1      # slow effects have worn off
+# print(colony.time, bee.duration)
+# bee.action(colony)
+# bee.place.name
+# print(bee.place.name)
+
+
+from ants import *
+hive, layout = Hive(AssaultPlan()), dry_layout
+dimensions = (1, 9)
+colony = AntColony(None, hive, ant_types(), layout, dimensions)
+# Testing Scare
+error_msg = "ScaryThrower doesn't scare for exactly two turns."
+scary = ScaryThrower()
+bee = Bee(3)
+colony.places["tunnel_0_0"].add_insect(scary)
+colony.places["tunnel_0_4"].add_insect(bee)
+scary.action(colony)
+bee.action(colony)
+bee.place.name # ScaryThrower should scare for two turns
+bee.action(colony)
+bee.place.name # ScaryThrower should scare for two turns
+bee.action(colony)
+bee.place.name
+
+
 

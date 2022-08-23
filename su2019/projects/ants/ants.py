@@ -148,7 +148,11 @@ class Bee(Insect):
     damage = 1
     # OVERRIDE CLASS ATTRIBUTES HERE
     is_watersafe = True
-
+    duration = 0
+    direction = True # If it is true, that present moving to colony, otherwise the bee move to hive. 
+    is_scared = False
+    start_time = 0 # start time
+    turns = 0
 
     def sting(self, ant):
         """Attack an ANT, reducing its armor by 1."""
@@ -176,6 +180,9 @@ class Bee(Insect):
         # Extra credit: Special handling for bee direction
         # BEGIN EC
         "*** YOUR CODE HERE ***"
+        # print("bee.duration = " + str(self.duration))
+        if not self.direction:
+            destination = self.place.entrance
         # END EC
         if self.blocked():
             self.sting(self.place.ant)
@@ -253,7 +260,9 @@ class ThrowerAnt(Ant):
 
     def action(self, colony):
         """Throw a leaf at the nearest Bee in range."""
-        self.throw_at(self.nearest_bee(colony.hive))
+        selected_bee = self.nearest_bee(colony.hive)
+        selected_bee.start_time = colony.time
+        self.throw_at(selected_bee)
 
 def random_or_none(s):
     """Return a random element of sequence S, or return None if S is empty."""
@@ -578,10 +587,18 @@ def make_slow(action, bee):
     """
     # BEGIN Problem EC
     "*** YOUR CODE HERE ***"
-    def action(colony):
-        if colony.time % 2 == 0:
-            bee.action(colony)
-    return action
+    #print(action, bee, bee.duration)
+    def new_action(colony):
+        #print("colony.time = " + str(colony.time), "bee.duration = " + str(bee.duration), "bee.action = " + str(bee.action), "action = " + str(action))
+        if colony.time % 2 == 0 and colony.time <= bee.start_time + bee.duration:
+            #print("event")
+            action(bee, colony)
+        elif colony.time > bee.start_time + bee.duration:
+            action(bee, colony)
+        # elif bee.turns > 0:
+        #     action(bee, colony)
+        # bee.turns -= 1
+    return new_action
     # END Problem EC
 
 def make_scare(action, bee):
@@ -591,15 +608,29 @@ def make_scare(action, bee):
     """
     # BEGIN Problem EC
     "*** YOUR CODE HERE ***"
-    def action(colony):
-        if not isinstance(bee.place.entrance, Hive): 
-            bee.move_to(bee.place.entrance)
+    def new_action(colony):
+        #print(bee, bee.direction, bee.is_scared)
+        # print(bee, bee.turns)
+        if not isinstance(bee.place.entrance, Hive) and bee.turns > 0:
+            # print(1)
+            bee.direction = False
+            action(bee, colony)
+        elif bee.turns <= 0:
+            # print(2)
+            bee.direction = True
+            bee.is_scared = False
+            action(bee, colony)
+        bee.turns = 0 if bee.turns <= 1 else (bee.turns - 1)
+    return new_action
     # END Problem EC
 
 def apply_effect(effect, bee, duration):
     """Apply a status effect to a BEE that lasts for DURATION turns."""
     # BEGIN Problem EC
     "*** YOUR CODE HERE ***"
+    #print(effect, bee, duration)
+    bee.duration += duration
+    bee.action = effect(Bee.action, bee)
     # END Problem EC
 
 
@@ -617,6 +648,8 @@ class SlowThrower(ThrowerAnt):
 
     def throw_at(self, target):
         if target:
+            #print(target)
+            #target.turns += 3
             apply_effect(make_slow, target, 3)
 
 
@@ -635,6 +668,10 @@ class ScaryThrower(ThrowerAnt):
     def throw_at(self, target):
         # BEGIN Problem EC
         "*** YOUR CODE HERE ***"
+        if target and not target.is_scared:
+            target.is_scared = True
+            target.turns += 2
+            apply_effect(make_scare, target, 2)
         # END Problem EC
 
 class LaserAnt(ThrowerAnt):
