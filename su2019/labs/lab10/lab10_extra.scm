@@ -1,16 +1,26 @@
 ;; Scheme ;;
 
 
-(define lst
-  'YOUR-CODE-HERE
+(define lst 
+  (cons (cons 1 nil) (cons 2 (cons (cons 3 (cons 4 nil)) (cons 5 nil))))
 )
 
 (define (composed f g)
-  'YOUR-CODE-HERE
+   (define (helper x)
+      (f (g x))
+    )
+   helper
 )
 
 (define (remove item lst)
-  'YOUR-CODE-HERE
+  (if (null? lst)
+    (list)
+    (if (eq? item (car lst))
+      (remove item (cdr lst))
+      (cons (car lst) (remove item (cdr lst)))
+    )
+  )
+
 )
 
 
@@ -22,12 +32,22 @@
 (remove 5 '(5 3 5 5 1 4 5 4))
 ; expect (3 1 4 4)
 
+
 (define (no-repeats s)
-  'YOUR-CODE-HERE
+ 'YOUR-CODE-HERE
 )
 
 (define (substitute s old new)
-  'YOUR-CODE-HERE
+  (if (null? s)
+    (list)
+    (if (pair? (car s))
+      (substitute (car s) old new)
+      (if (equal? (car s) old)
+        (cons new (substitute (cdr s) old new))
+        (cons (car s) (substitute (cdr s) old new))
+      )
+    )
+  )
 )
 
 

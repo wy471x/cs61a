@@ -20,9 +20,27 @@
 (over-or-under 1 1)
 ; expect 0
 
+
+(define (add-to-end lst x)
+   (if (null? lst)
+      (list x)
+      (if (null? (cdr lst))
+         (cons (car lst) (cons x nil))
+         (cons (car lst) (add-to-end (cdr lst) x))
+        )
+    )
+)
+
+
 (define (filter-lst f lst)
   'YOUR-CODE-HERE
-  (if ())
+  (if (null? lst)
+     (list)
+     (if (f (car lst))
+        (cons (car lst) (filter-lst f (cdr lst)))
+        (filter-lst f (cdr lst))
+      )
+    )
 )
 
 ;;; Tests
@@ -33,6 +51,10 @@
 
 (define (make-adder num)
   'YOUR-CODE-HERE
+  (define (adder x)
+    (+ x num)
+    )
+  adder
 )
 
 ;;; Tests
