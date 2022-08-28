@@ -176,13 +176,13 @@ def cumulative_sum(t):
     Tree(16, [Tree(8, [Tree(5)]), Tree(7)])
     """
     "*** YOUR CODE HERE ***"
-    if t is Link.empty:
-        return t
-    if Tree.is_leaf(t):
-        return Tree(t.label)
-    result = Tree(t.label)
-    for b in t.branches:
-        subtree = cumulative_sum(b)
-        result.label += subtree.label
-        result.branches += [subtree]
-    t = result
+    def helper(t):
+        if Tree.is_leaf(t):
+            return t
+        result = t
+        for b in t.branches:
+            subtree = helper(b)
+            result.label += subtree.label
+        return result
+    helper(t)
+    

@@ -130,6 +130,15 @@ def has_cycle(link):
     False
     """
     "*** YOUR CODE HERE ***"
+    track_lst = []
+    cur = link
+    while cur is not Link.empty:
+        if cur in track_lst:
+            return True
+        track_lst += [cur]
+        cur = cur.rest
+    return False
+
 
 def has_cycle_constant(link):
     """Return whether link contains a cycle.
@@ -143,6 +152,16 @@ def has_cycle_constant(link):
     False
     """
     "*** YOUR CODE HERE ***"
+    if link is Link.empty:
+        return False
+
+    first = link
+    cur = link.rest
+    while cur is not Link.empty:
+        if cur is first:
+            return True
+        cur = cur.rest
+    return False
 
 def reverse_other(t):
     """Mutates the tree such that nodes on every other (odd-depth) level
@@ -158,3 +177,45 @@ def reverse_other(t):
     Tree(1, [Tree(8, [Tree(3, [Tree(5), Tree(4)]), Tree(6, [Tree(7)])]), Tree(2)])
     """
     "*** YOUR CODE HERE ***"
+    # def helper(branches, depth):
+    #     if len(branches) == 0:
+    #         return 
+    #     new_branches = []
+    #     if depth % 2 != 0:
+    #         i, j = 0, len(branches) - 1
+    #         while i < j:
+    #             tmp = branches[i].label
+    #             branches[i].label = branches[j].label
+    #             branches[j].label = tmp
+    #             new_branches += branches[i].branches
+    #             new_branches += branches[j].branches
+    #             i += 1
+    #             j -= 1
+    #     else:
+    #         for b in branches:
+    #             new_branches += b.branches
+    #     print(new_branches)
+    #     helper(new_branches, depth + 1)
+    # if t.is_leaf():
+    #     return
+    # helper(t.branches, 1)
+    def helper(t, depth):
+        if t.is_leaf():
+            return
+        if depth % 2 != 0:
+            i, j = 0, len(t.branches) - 1
+            while i < j:
+                tmp = t.branches[i].label
+                t.branches[i].label = t.branches[j].label
+                t.branches[j].label = tmp
+                i += 1
+                j -= 1
+        for b in t.branches:
+            helper(b, depth + 1)
+    helper(t, 1)
+
+
+
+
+
+
