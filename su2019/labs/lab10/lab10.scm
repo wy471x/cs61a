@@ -33,7 +33,6 @@
 
 
 (define (filter-lst f lst)
-  'YOUR-CODE-HERE
   (if (null? lst)
      (list)
      (if (f (car lst))

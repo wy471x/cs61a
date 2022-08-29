@@ -34,14 +34,17 @@
 
 
 (define (no-repeats s)
- 'YOUR-CODE-HERE
+ (cond 
+  ((null? s) s)
+  (else (cons (car s) (no-repeats (filter-lst (lambda (x) (not (= x (car s)))) (cdr s)))))
+ )
 )
 
 (define (substitute s old new)
   (if (null? s)
     (list)
     (if (pair? (car s))
-      (substitute (car s) old new)
+      (cons (substitute (car s) old new) (substitute (cdr s) old new))
       (if (equal? (car s) old)
         (cons new (substitute (cdr s) old new))
         (cons (car s) (substitute (cdr s) old new))
@@ -52,5 +55,8 @@
 
 
 (define (sub-all s olds news)
-  'YOUR-CODE-HERE
+  (cond 
+    ((and (null? olds) (null? news)) s)
+    (else (sub-all (substitute s (car olds) (car news)) (cdr olds) (cdr news)))
+  )
 )
