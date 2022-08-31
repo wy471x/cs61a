@@ -34,6 +34,8 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
     else:
         # BEGIN PROBLEM 5
         "*** YOUR CODE HERE ***"
+        if not check_procedure(expr):
+            raise SchemeError("{0} is not callable: {1}".format(str(type(first)).split("'")[1], first))
         # END PROBLEM 5
 
 def self_evaluating(expr):
@@ -151,7 +153,7 @@ class BuiltinProcedure(Procedure):
         if self.use_env is True:
             python_args += [env]
         try:
-            self.fn(*python_args)
+            return self.fn(*python_args)
         except TypeError as e:
             raise SchemeError('calling function in error type.')
         # END PROBLEM 4
