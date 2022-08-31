@@ -18,6 +18,11 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
     Pair('+', Pair(2, Pair(2, nil)))
     >>> scheme_eval(expr, create_global_frame())
     4
+    >>> expr = read_line('(+ (+ 2 2) (+ 1 3) (* 1 4))')
+    >>> expr
+    Pair('+', Pair(Pair('+', Pair(2, Pair(2, nil))), Pair(Pair('+', Pair(1, Pair(3, nil))), Pair(Pair('*', Pair(1, Pair(4, nil))), nil))))
+    >>> scheme_eval(expr, create_global_frame())
+    12
     """
     # Evaluate atoms
     if scheme_symbolp(expr):
@@ -34,8 +39,21 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
     else:
         # BEGIN PROBLEM 5
         "*** YOUR CODE HERE ***"
-        if not check_procedure(expr):
-            raise SchemeError("{0} is not callable: {1}".format(str(type(first)).split("'")[1], first))
+        main_procedure = scheme_eval(first, env)
+        operands = None
+        if isinstance(rest.first, Pair):
+            while rest is not nil:
+                e = rest.first
+                if operands is None:
+                    operands = Pair(scheme_eval(e, env), nil)
+                else:
+                    print(operands)
+                    operands.second = Pair(scheme_eval(e, env), nil)
+                    print(operands)
+                rest = rest.second
+        else:
+            operands = Pair.map(rest, main_procedure.fn)
+        return scheme_apply(main_procedure, operands, env)
         # END PROBLEM 5
 
 def self_evaluating(expr):
