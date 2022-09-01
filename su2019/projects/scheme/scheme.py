@@ -20,7 +20,7 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
     4
     >>> expr = read_line('(+ (+ 2 2) (+ 1 3) (* 1 4))')
     >>> expr
-    Pair('+', Pair(Pair('+', Pair(2, Pair(2, nil))), Pair(Pair('+', Pair(1, Pair(3, nil))), Pair(Pair('*', Pair(1, Pair(4, nil))), nil))))
+    Pair('+', Pair( Pair('+', Pair(2, Pair(2, nil))), Pair( Pair('+', Pair(1, Pair(3, nil))), Pair( Pair('*', Pair(1, Pair(4, nil))), nil))))
     >>> scheme_eval(expr, create_global_frame())
     12
     """
@@ -40,20 +40,28 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
         # BEGIN PROBLEM 5
         "*** YOUR CODE HERE ***"
         main_procedure = scheme_eval(first, env)
-        operands = None
+        if check_procedure(main_procedure):
+            raise SchemeError("{0} is not callable: {1}".format(str(first).split("'")[1], first))
+        if rest is nil:
+            return 0
+        head_operand, tail_operand = None, None
         if isinstance(rest.first, Pair):
             while rest is not nil:
                 e = rest.first
-                if operands is None:
-                    operands = Pair(scheme_eval(e, env), nil)
+                if head_operand is None:
+                    head_operand = Pair(scheme_eval(e, env), nil)
+                    tail_operand = head_operand
                 else:
-                    print(operands)
-                    operands.second = Pair(scheme_eval(e, env), nil)
-                    print(operands)
+                    # print(head_operand, tail_operand)
+                    tmp_operand = Pair(scheme_eval(e, env), nil)
+                    tail_operand.second = tmp_operand
+                    tail_operand = tmp_operand
+                    # print(head_operand, tail_operand)
                 rest = rest.second
         else:
-            operands = Pair.map(rest, main_procedure.fn)
-        return scheme_apply(main_procedure, operands, env)
+            head_operand = Pair.map(rest, main_procedure.fn)
+            print(head_operand)
+        return scheme_apply(main_procedure, head_operand, env)
         # END PROBLEM 5
 
 def self_evaluating(expr):
