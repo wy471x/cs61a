@@ -60,8 +60,15 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
                 rest = rest.second
         else:
             head_operand = Pair.map(rest, main_procedure.fn)
-            print(head_operand)
-        return scheme_apply(main_procedure, head_operand, env)
+            if isinstance(head_operand.first, bool) and head_operand.second is not nil:
+                raise SchemeError("incorrect number of arguments: {0}".format(main_procedure))
+            if isinstance(head_operand.first, bool):
+                return head_operand.first
+        print(main_procedure, head_operand)
+        result = scheme_apply(main_procedure, head_operand, env)
+        if isinstance(result, Pair):
+            return result.first
+        return result
         # END PROBLEM 5
 
 def self_evaluating(expr):

@@ -74,6 +74,7 @@ class Pair(object):
     def map(self, fn):
         """Return a Scheme list after mapping Python function FN to SELF."""
         mapped = fn(self.first)
+        # print(mapped)
         if self.second is nil or isinstance(self.second, Pair):
             return Pair(mapped, self.second.map(fn))
         else:
