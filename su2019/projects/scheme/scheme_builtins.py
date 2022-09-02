@@ -125,6 +125,7 @@ def scheme_cons(x, y):
 
 @builtin("car")
 def scheme_car(x):
+    # print(x)
     check_type(x, scheme_pairp, 0, 'car')
     return x.first
 

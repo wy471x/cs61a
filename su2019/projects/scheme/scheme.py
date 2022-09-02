@@ -28,6 +28,9 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
     Pair('+', Pair(Pair('+', Pair(1, nil)), Pair(Pair('*', Pair(2, Pair(3, nil))), Pair(Pair('+', Pair(5, nil)), Pair(Pair('+', Pair(6, Pair(Pair('+', Pair(7, nil)), nil))), nil)))))
     >>> scheme_eval(expr, create_global_frame())
     25
+    >>> expr = read_line('(car (list 1 2 3 4))')
+    >>> expr
+    Pair('car', Pair(Pair('list', Pair(1, Pair(2, Pair(3, Pair(4, nil))))), nil))
     """
     # Evaluate atoms
     if scheme_symbolp(expr):
@@ -44,52 +47,66 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
     else:
         # BEGIN PROBLEM 5
         "*** YOUR CODE HERE ***"
-        main_procedure = scheme_eval(first, env)
-        print(main_procedure)
-        if check_procedure(main_procedure):
-            raise SchemeError("{0} is not callable: {1}".format(str(first).split("'")[1], first))
-        if rest is nil:
-            return 0
-        # print(rest)
-        head_operand, tail_operand = None, None
-        if isinstance(rest.first, Pair):
-            while rest is not nil:
-                e = rest.first
-                if head_operand is None:
-                    head_operand = Pair(scheme_eval(e, env), nil)
-                    tail_operand = head_operand
-                else:
-                    # print(head_operand, tail_operand)
-                    tmp_operand = Pair(scheme_eval(e, env), nil)
-                    tail_operand.second = tmp_operand
-                    tail_operand = tmp_operand
-                    # print(head_operand, tail_operand)
-                rest = rest.second
-        else:
-            if isinstance(rest.second, Pair):
-                while rest is not nil:
-                    e = rest.first
-                    if head_operand is None:
-                        head_operand = Pair(scheme_eval(e, env), nil)
-                        tail_operand = head_operand
-                    else:
-                        # print(head_operand, tail_operand)
-                        tmp_operand = Pair(scheme_eval(e, env), nil)
-                        tail_operand.second = tmp_operand
-                        tail_operand = tmp_operand
-                    # print(head_operand, tail_operand)
-                    rest = rest.second
-            else:    
-                head_operand = Pair.map(rest, main_procedure.fn)
-            if isinstance(head_operand.first, bool) and head_operand.second is not nil:
-                raise SchemeError("incorrect number of arguments: {0}".format(main_procedure))
-            if isinstance(head_operand.first, bool):
-                return head_operand.first
-        print(main_procedure, head_operand)
-        result = scheme_apply(main_procedure, head_operand, env)
-        if isinstance(result, Pair):
-            return result.first
-        return result
+        ## ERROR CODE
+        # main_procedure = scheme_eval(first, env)
+        # print(main_procedure)
+        # if check_procedure(main_procedure):
+        #     raise SchemeError("{0} is not callable: {1}".format(str(first).split("'")[1], first))
+        # if rest is nil:
+        #     return 0
+        # # print(rest)
+        # head_operand, tail_operand = None, None
+        # if isinstance(rest.first, Pair):
+        #     procedure = scheme_eval(rest.first, env)
+        #     # print(procedure)
+        #     if isinstance(procedure, Procedure):
+        #         operands = scheme_eval(rest.second, env)
+        #         return scheme_apply(procedure, operands, env)
+        #     else:
+        #         while rest is not nil:
+        #             e = rest.first
+        #             if head_operand is None:
+        #                 head_operand = Pair(scheme_eval(e, env), nil)
+        #                 tail_operand = head_operand
+        #             else:
+        #                 # print(head_operand, tail_operand)
+        #                 tmp_operand = Pair(scheme_eval(e, env), nil)
+        #                 tail_operand.second = tmp_operand
+        #                 tail_operand = tmp_operand
+        #                 # print(head_operand, tail_operand)
+        #             rest = rest.second
+        # else:
+        #     if isinstance(rest.second, Pair):
+        #         while rest is not nil:
+        #             e = rest.first
+        #             if head_operand is None:
+        #                 head_operand = Pair(scheme_eval(e, env), nil)
+        #                 tail_operand = head_operand
+        #             else:
+        #                 # print(head_operand, tail_operand)
+        #                 tmp_operand = Pair(scheme_eval(e, env), nil)
+        #                 tail_operand.second = tmp_operand
+        #                 tail_operand = tmp_operand
+        #             # print(head_operand, tail_operand)
+        #             rest = rest.second
+        #     else:    
+        #         head_operand = Pair.map(rest, main_procedure.fn)
+        #     if isinstance(head_operand.first, bool) and head_operand.second is not nil:
+        #         raise SchemeError("incorrect number of arguments: {0}".format(main_procedure))
+        #     if isinstance(head_operand.first, bool):
+        #         return head_operand.first
+        # # print(main_procedure, head_operand)
+        # result = scheme_apply(main_procedure, head_operand, env)
+        # if isinstance(result, Pair):
+        #     return result.first
+        # return result
+        ## ERROR CODE
+        operator = scheme_eval(first, env)
+        check_procedure(operator)
+        if isinstance(operator, MacroProcedure):
+            return operator.apply_macro(rest, env)
+        operands = rest.map(lambda x: scheme_eval(x, env))
+        return scheme_apply(operator, operands, env)
         # END PROBLEM 5
 
 def self_evaluating(expr):
@@ -207,6 +224,7 @@ class BuiltinProcedure(Procedure):
         if self.use_env is True:
             python_args += [env]
         try:
+            # print(python_args)
             return self.fn(*python_args)
         except TypeError as e:
             raise SchemeError('calling function in error type.')
