@@ -23,6 +23,11 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
     Pair('+', Pair( Pair('+', Pair(2, Pair(2, nil))), Pair( Pair('+', Pair(1, Pair(3, nil))), Pair( Pair('*', Pair(1, Pair(4, nil))), nil))))
     >>> scheme_eval(expr, create_global_frame())
     12
+    >>> expr = read_line('(+ (+ 1) (* 2 3) (+ 5) (+ 6 (+ 7)))')
+    >>> expr
+    Pair('+', Pair(Pair('+', Pair(1, nil)), Pair(Pair('*', Pair(2, Pair(3, nil))), Pair(Pair('+', Pair(5, nil)), Pair(Pair('+', Pair(6, Pair(Pair('+', Pair(7, nil)), nil))), nil)))))
+    >>> scheme_eval(expr, create_global_frame())
+    25
     """
     # Evaluate atoms
     if scheme_symbolp(expr):
@@ -40,10 +45,12 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
         # BEGIN PROBLEM 5
         "*** YOUR CODE HERE ***"
         main_procedure = scheme_eval(first, env)
+        print(main_procedure)
         if check_procedure(main_procedure):
             raise SchemeError("{0} is not callable: {1}".format(str(first).split("'")[1], first))
         if rest is nil:
             return 0
+        # print(rest)
         head_operand, tail_operand = None, None
         if isinstance(rest.first, Pair):
             while rest is not nil:
@@ -59,7 +66,21 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
                     # print(head_operand, tail_operand)
                 rest = rest.second
         else:
-            head_operand = Pair.map(rest, main_procedure.fn)
+            if isinstance(rest.second, Pair):
+                while rest is not nil:
+                    e = rest.first
+                    if head_operand is None:
+                        head_operand = Pair(scheme_eval(e, env), nil)
+                        tail_operand = head_operand
+                    else:
+                        # print(head_operand, tail_operand)
+                        tmp_operand = Pair(scheme_eval(e, env), nil)
+                        tail_operand.second = tmp_operand
+                        tail_operand = tmp_operand
+                    # print(head_operand, tail_operand)
+                    rest = rest.second
+            else:    
+                head_operand = Pair.map(rest, main_procedure.fn)
             if isinstance(head_operand.first, bool) and head_operand.second is not nil:
                 raise SchemeError("incorrect number of arguments: {0}".format(main_procedure))
             if isinstance(head_operand.first, bool):
