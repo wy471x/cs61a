@@ -127,7 +127,13 @@ def eval_all(expressions, env):
     """Evaluate each expression in the Scheme list EXPRESSIONS in
     environment ENV and return the value of the last."""
     # BEGIN PROBLEM 8
-    return scheme_eval(expressions.first, env)
+    if expressions is nil:
+        return None
+    expression = expressions
+    while expression.second is not nil:
+        scheme_eval(expression.first, env)
+        expression = expression.second
+    return scheme_eval(expression.first, env)
     # END PROBLEM 8
 
 ################
@@ -180,6 +186,14 @@ class Frame(object):
         """
         # BEGIN PROBLEM 11
         "*** YOUR CODE HERE ***"
+        if len(formals) != len(vals):
+            raise SchemeError("number of argument values does not match with the number of formal parameters.")
+        child_frame = Frame(self)
+        formal, val = formals, vals
+        while formal is not nil:
+            child_frame.define(formal.first, val.first)
+            formal, val = formal.second, val.second
+        return child_frame
         # END PROBLEM 11
 
 ##############
@@ -246,6 +260,7 @@ class LambdaProcedure(Procedure):
         of values, for a lexically-scoped call evaluated in environment ENV."""
         # BEGIN PROBLEM 12
         "*** YOUR CODE HERE ***"
+        
         # END PROBLEM 12
 
     def __str__(self):
@@ -294,6 +309,11 @@ def do_define_form(expressions, env):
     elif isinstance(target, Pair) and scheme_symbolp(target.first):
         # BEGIN PROBLEM 10
         "*** YOUR CODE HERE ***"
+        formals = expressions.first.second
+        body = expressions.second
+        lambda_expression = LambdaProcedure(formals, body, env)
+        env.define(target.first, lambda_expression)
+        return target.first
         # END PROBLEM 10
     else:
         bad_target = target.first if isinstance(target, Pair) else target
@@ -319,6 +339,7 @@ def do_lambda_form(expressions, env):
     check_formals(formals)
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+    return LambdaProcedure(formals, expressions.second, env)
     # END PROBLEM 9
 
 def do_if_form(expressions, env):
