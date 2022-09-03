@@ -57,6 +57,43 @@
       6))
 ; expect 57
 
+(+ 1 2)
+; expect 3
+
+(* 3 4 (- 5 2) 1)
+; expect 36
+
+(odd? 31)
+; expect #t
+
+(+ (+ 1 2) (* 2 3) 1)
+; expect 10
+
+(define x 0)
+; expect x
+
+((define x (+ x 1)) 2)
+; expect Error
+x
+; expect 1
+
+(define x 2 y 4)
+; expect Error
+
+'hello
+; expect hello
+
+'(1 2)
+; expect (1 2)
+
+'(1 (2 three (4 5)))
+; expect (1 (2 three (4 5)))
+
+(car '(a b))
+; expect a
+
+`(1 ,(+ 1 1) 3)
+; expect (1 2 3)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Move the following (exit) line down the file to run additional tests. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
