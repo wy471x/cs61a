@@ -102,10 +102,12 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
         # return result
         ## ERROR CODE
         operator = scheme_eval(first, env)
+        print("DEBUG: ", str(operator))
         check_procedure(operator)
         if isinstance(operator, MacroProcedure):
             return operator.apply_macro(rest, env)
         operands = rest.map(lambda x: scheme_eval(x, env))
+        print("DEBUG: ", str(operands))
         return scheme_apply(operator, operands, env)
         # END PROBLEM 5
 
@@ -117,6 +119,7 @@ def scheme_apply(procedure, args, env):
     """Apply Scheme PROCEDURE to argument values ARGS (a Scheme list) in
     environment ENV."""
     check_procedure(procedure)
+    print("DEBUG: ", isinstance(procedure, BuiltinProcedure))
     if isinstance(procedure, BuiltinProcedure):
         return procedure.apply(args, env)
     else:
@@ -168,6 +171,7 @@ class Frame(object):
         if symbol in self.bindings.keys():
             return self.bindings[symbol]
         if self.parent is not None:
+            print("DEBUG: " + str(self.parent))
             return self.parent.lookup(symbol)
         # END PROBLEM 3
         raise SchemeError('unknown identifier: {0}'.format(symbol))
@@ -238,7 +242,6 @@ class BuiltinProcedure(Procedure):
         if self.use_env is True:
             python_args += [env]
         try:
-            # print(python_args)
             return self.fn(*python_args)
         except TypeError as e:
             raise SchemeError('calling function in error type.')
@@ -260,7 +263,9 @@ class LambdaProcedure(Procedure):
         of values, for a lexically-scoped call evaluated in environment ENV."""
         # BEGIN PROBLEM 12
         "*** YOUR CODE HERE ***"
-        
+        print("DEBUG: " + str(args))
+        # self.env.parent = env
+        return self.env.make_child_frame(self.formals, args)
         # END PROBLEM 12
 
     def __str__(self):
@@ -354,12 +359,36 @@ def do_and_form(expressions, env):
     """Evaluate a (short-circuited) and form."""
     # BEGIN PROBLEM 13
     "*** YOUR CODE HERE ***"
+    # print('DEBUG: ', str(expressions))
+    # print('DEBUG: ', str(env.lookup('not')))
+    if expressions is nil:
+        return True
+    expression = expressions
+    result = 0
+    while expression is not nil:
+        result = scheme_eval(expression.first, env)
+        if scheme_falsep(result):
+            return False
+        expression = expression.second
+    return result
     # END PROBLEM 13
 
 def do_or_form(expressions, env):
     """Evaluate a (short-circuited) or form."""
     # BEGIN PROBLEM 13
     "*** YOUR CODE HERE ***"
+    # print('DEBUG: ', str(expressions))
+    # print('DEBUG: ', str(env.lookup('not')))
+    if expressions is nil:
+        return False
+    expression = expressions
+    result = 0
+    while expression is not nil:
+        result = scheme_eval(expression.first, env)
+        if scheme_truep(result):
+            return result
+        expression = expression.second
+    return False
     # END PROBLEM 13
 
 def do_cond_form(expressions, env):
@@ -376,6 +405,7 @@ def do_cond_form(expressions, env):
         if scheme_truep(test):
             # BEGIN PROBLEM 14
             "*** YOUR CODE HERE ***"
+            
             # END PROBLEM 14
         expressions = expressions.second
 

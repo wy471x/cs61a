@@ -94,6 +94,21 @@ x
 
 `(1 ,(+ 1 1) 3)
 ; expect (1 2 3)
+
+(define (outer x y)
+  (define (inner z x)
+    (+ x (* y 2) (* z 3)))
+  (inner x 10))
+; expect outer
+
+(define (outer-func x y)
+  (define (inner z x)
+    (+ x (* y 2) (* z 3)))
+  inner)
+; expect outer-func
+
+((outer-func 1 2) 1 10)
+; expect 17
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Move the following (exit) line down the file to run additional tests. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
