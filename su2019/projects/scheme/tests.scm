@@ -109,6 +109,23 @@ x
 
 ((outer-func 1 2) 1 10)
 ; expect 17
+
+(cond ((= 4 3) 'nope)
+      ((= 4 4) 'hi)
+      (else 'wait))
+; expect hi
+
+(cond ((= 4 3) 'wat)
+      ((= 4 4))
+      (else 'hm))
+; expect #t
+
+(cond ((= 4 4) 'here (+ 40 2))
+      (else 'wat 0))
+; expect 42
+
+(cond (False 1) (False 2))
+; expect
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Move the following (exit) line down the file to run additional tests. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

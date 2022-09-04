@@ -102,12 +102,10 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
         # return result
         ## ERROR CODE
         operator = scheme_eval(first, env)
-        print("DEBUG: ", str(operator))
         check_procedure(operator)
         if isinstance(operator, MacroProcedure):
             return operator.apply_macro(rest, env)
         operands = rest.map(lambda x: scheme_eval(x, env))
-        print("DEBUG: ", str(operands))
         return scheme_apply(operator, operands, env)
         # END PROBLEM 5
 
@@ -119,7 +117,6 @@ def scheme_apply(procedure, args, env):
     """Apply Scheme PROCEDURE to argument values ARGS (a Scheme list) in
     environment ENV."""
     check_procedure(procedure)
-    print("DEBUG: ", isinstance(procedure, BuiltinProcedure))
     if isinstance(procedure, BuiltinProcedure):
         return procedure.apply(args, env)
     else:
@@ -171,7 +168,6 @@ class Frame(object):
         if symbol in self.bindings.keys():
             return self.bindings[symbol]
         if self.parent is not None:
-            print("DEBUG: " + str(self.parent))
             return self.parent.lookup(symbol)
         # END PROBLEM 3
         raise SchemeError('unknown identifier: {0}'.format(symbol))
@@ -263,7 +259,6 @@ class LambdaProcedure(Procedure):
         of values, for a lexically-scoped call evaluated in environment ENV."""
         # BEGIN PROBLEM 12
         "*** YOUR CODE HERE ***"
-        print("DEBUG: " + str(args))
         # self.env.parent = env
         return self.env.make_child_frame(self.formals, args)
         # END PROBLEM 12
@@ -359,8 +354,6 @@ def do_and_form(expressions, env):
     """Evaluate a (short-circuited) and form."""
     # BEGIN PROBLEM 13
     "*** YOUR CODE HERE ***"
-    # print('DEBUG: ', str(expressions))
-    # print('DEBUG: ', str(env.lookup('not')))
     if expressions is nil:
         return True
     expression = expressions
@@ -405,7 +398,10 @@ def do_cond_form(expressions, env):
         if scheme_truep(test):
             # BEGIN PROBLEM 14
             "*** YOUR CODE HERE ***"
-            
+            if clause.second is nil:
+                return test
+            result = eval_all(clause.second, env)
+            return True if result is None else result
             # END PROBLEM 14
         expressions = expressions.second
 
@@ -424,6 +420,40 @@ def make_let_frame(bindings, env):
         raise SchemeError('bad bindings list in let form')
     # BEGIN PROBLEM 15
     "*** YOUR CODE HERE ***"
+    ## ERROR CODE
+    # formals, vals = None, None
+    # formal, val = None, None
+    # cur = bindings
+    # while cur is not nil:
+    #     check_form(cur.first, 2, 2)
+    #     temp_formal = Pair(cur.first.first, nil)
+    #     if scheme_symbolp(cur.first.second.first):
+    #         if cur.first.second.first not in env.bindings.keys():
+    #             raise SchemeError("key {0} isn't exists.".format(str(cur.first.second.first)))
+    #         temp_val = Pair(env.bindings[cur.first.second.first], nil)
+    #     else:
+    #         temp_val = Pair(cur.first.second.first, nil)
+    #     if formals is None:
+    #         formal = temp_formal
+    #         val = temp_val
+    #         formals = formal
+    #         vals = val
+    #     else:
+    #         formal.second = temp_formal
+    #         formal = temp_formal
+    #         val.second = temp_val
+    #         val = temp_val
+    #     cur = cur.second
+    # return env.make_child_frame(formals, vals)
+    ## ERROR CODE
+    names, values = nil, nil
+    while bindings is not nil:
+        binding = bindings.first
+        check_form(binding, 2, 2)
+        names, values = Pair(binding.first, names), Pair(scheme_eval(binding.second.first, env), values)
+        bindings = bindings.second
+    check_formals(names)
+    return env.make_child_frame(names, values)
     # END PROBLEM 15
 
 def do_define_macro(expressions, env):
@@ -558,6 +588,7 @@ def do_mu_form(expressions, env):
     check_formals(formals)
     # BEGIN PROBLEM 16
     "*** YOUR CODE HERE ***"
+    
     # END PROBLEM 16
 
 SPECIAL_FORMS['mu'] = do_mu_form
