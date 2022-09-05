@@ -126,6 +126,15 @@ x
 
 (cond (False 1) (False 2))
 ; expect
+
+(define f (mu () (* a b)))
+; expect f
+
+(define g (lambda () (define a 4) (define b 5) (f)))
+; expect g
+
+(g)
+; expect 20
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Move the following (exit) line down the file to run additional tests. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

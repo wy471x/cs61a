@@ -7,18 +7,35 @@
 
 ;; Problem 17
 ;; Returns a list of two-element lists
+
+(define (enumerate-helper s i)
+  (if (null? (cdr s)) (cons (cons i (cons (car s) nil)) nil)
+      (cons (cons i (cons (car s) nil)) (enumerate-helper (cdr s) (+ i 1)))
+  )
+)
+
 (define (enumerate s)
   ; BEGIN PROBLEM 17
-  'replace-this-line
+  (if (null? s) s
+      (enumerate-helper s 0)
   )
+)
   ; END PROBLEM 17
 
 ;; Problem 18
 
+(define (zip-helper first_lst second_lst pairs)
+  (if (null? (cdr pairs)) (cons ((car first_lst) (cons (car (car pairs)) nil))  (cons (car second_lst) (cons (car (cdr (car pairs))) nil)))
+    (zip-helper (cons (car first_lst) (cons (car (car pairs)) nil)) (cons (car second_lst) (cons (car (cdr (car pairs))) nil)) (cdr pairs))
+  )
+)
+
 (define (zip pairs)
   ; BEGIN PROBLEM 18
-  'replace-this-line
+  (if (null? pairs) (cons pairs (cons pairs nil))
+      (zip-helper (cons (car (car pairs)) nil) (cons (car (cdr (car pairs))) nil) (cdr pairs))
   )
+)
   ; END PROBLEM 18
 
 
