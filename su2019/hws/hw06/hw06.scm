@@ -8,19 +8,23 @@
   (cdr (cdr s)))
 
 (define (cadr s)
-  'YOUR-CODE-HERE
+  (car (cdr s))
 )
 
 (define (caddr s)
-  'YOUR-CODE-HERE
+  (car (cdr (cdr s)))
 )
 
 (define (unique s)
-  'YOUR-CODE-HERE
+  (cond
+   ((null? s) s)
+   (else (cons (car s) (unique (filter (lambda (x) (not (eq? x (car s)))) (cdr s)))))
+  )
 )
 
 (define (cons-all first rests)
-  'replace-this-line)
+  (map (lambda (x) (cons first x)) rests)
+)
 
 ;; List all ways to make change for TOTAL with DENOMS
 (define (list-change total denoms)
