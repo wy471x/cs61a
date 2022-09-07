@@ -28,7 +28,19 @@
 
 ;; List all ways to make change for TOTAL with DENOMS
 (define (list-change total denoms)
-  
+  (define (helper n xs)
+    (if (null? xs)
+      nil
+      (if (= 0 n)
+        '(nil)
+        (if (< n (car xs))
+          (helper n (cdr xs))
+          (append (cons-all (car xs) (helper (- n (car xs)) denoms)) (list-change n (cdr xs)))
+        )
+      )
+    )
+  )
+  (helper total denoms)
 )
 
 ; Tail recursion
