@@ -2,9 +2,11 @@
     (if (zero? n)
         x
         (let
-            (y (repeatedly-cube (- n 1) x))
-            (* y y y))))
+            ( (y (repeatedly-cube (- n 1) x)) )
+            (* y y y)))
+)
 
 
 (define-macro (def func bindings body)
-    'YOUR-CODE-HERE)
+    'define func bindings body
+)
