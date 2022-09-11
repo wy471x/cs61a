@@ -33,15 +33,18 @@ CREATE TABLE size_of_dogs AS
 
 -- All dogs with parents ordered by decreasing height of their parent
 CREATE TABLE by_parent_height AS
-  SELECT p.parent FROM dogs d, (SELECT p.child name, s.size size FROM dogs d, parents p, sizes s WHERE p.parent = d.name AND d.height > s.min AND d.height <= s.max) t WHERE d.name = t.name ORDER BY t.size DESC;
+  SELECT d.name FROM dogs d, (SELECT p.child name, d.height height FROM dogs d, parents p WHERE p.parent = d.name) t WHERE d.name = t.name ORDER BY t.height DESC;
 
 -- Filling out this helper table is optional
+CREATE TABLE siblings_helper AS
+  SELECT d1.name first, d2.name second FROM dogs d1, dogs d2, parents p1, parents p2 WHERE d1.name = p1.child AND d2.name = p2.child AND p1.parent = p2.parent AND d1.name != d2.name;
+
 CREATE TABLE siblings AS
-  SELECT "REPLACE THIS LINE WITH YOUR SOLUTION";
+  SELECT sh1.first, sh1.second FROM siblings_helper sh1, siblings_helper sh2 WHERE sh1.first = sh2.first AND sh1.second = sh2.second AND sh1.first != sh2.second AND sh1.second != sh2.first;
 
 -- Sentences about siblings that are the same size
-CREATE TABLE sentences AS
-  SELECT "REPLACE THIS LINE WITH YOUR SOLUTION";
+-- CREATE TABLE sentences AS
+--   SELECT sib.first || " and " || sib.second || " are " || sod1.size || " siblings" FROM siblings sib, size_of_dogs sod1, size_of_dogs sod2 WHERE sib.first = sod1.name AND sib.second = sod2.name AND sod1.size = sod2.size ORDER BY sib.first, sib.second;
 
 -- Total size for each fur type where all of the heights differ by no more than 30% from the average height
 CREATE TABLE low_variance AS
