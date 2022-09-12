@@ -1,7 +1,9 @@
 ; Lab 14: Final Review
 
 (define (compose-all funcs)
-  'YOUR-CODE-HERE
+  (if (null? (cdr funcs)) (car funcs)
+    ((car funcs) (compose-all (cdr funcs)))
+  )
 )
 
 (define (has-cycle? s)

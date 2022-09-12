@@ -127,6 +127,23 @@ def insert(link, value, index):
     IndexError
     """
     "*** YOUR CODE HERE ***"
+    print("DEBUG:", link)
+    i = 0
+    cur = link
+    while cur is not Link.empty and i < index:
+        cur = cur.rest
+        i += 1
+    if cur is Link.empty:
+        raise IndexError('index is out of bounds.')
+    old = value
+    while cur.rest is not Link.empty:
+        tmp = cur.first
+        cur.first = old
+        old = tmp
+        cur = cur.rest
+    last = cur.first
+    cur.first = old
+    cur.rest = Link(last)
 
 # Link CLass
 class Link:
