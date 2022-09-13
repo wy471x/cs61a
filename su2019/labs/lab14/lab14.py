@@ -15,11 +15,11 @@ def prune_small(t, n):
     >>> t3
     Tree(6, [Tree(1), Tree(3, [Tree(1), Tree(2)])])
     """
-    while ___________________________:
-        largest = max(_______________, key=____________________)
-        _________________________
-    for __ in _____________:
-        ___________________
+    while len(t.branches) > n:
+        largest = max(t.branches, key=lambda b: b.label)
+        t.branches.remove(largest)
+    for b in t.branches:
+        prune_small(b, n)
 
 # Tree Class
 class Tree:
@@ -110,6 +110,14 @@ def num_splits(s, d):
     12
     """
     "*** YOUR CODE HERE ***"
+    def helper(xs, n=0):
+        if len(xs) == 0:
+            if abs(n) <= d:
+                return 1
+            return 0
+        first, rest = xs[0], xs[1:]
+        return helper(rest, n + first) + helper(rest, n - first)
+    return helper(s) // 2
 
 def insert(link, value, index):
     """Insert a value into a Link at the given index.
